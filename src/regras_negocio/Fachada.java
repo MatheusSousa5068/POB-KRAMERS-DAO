@@ -3,7 +3,7 @@ package regras_negocio;
 import java.util.List;
 
 import daodb4o.DAO;
-import daodb4o.DAOproduto;
+import daodb4o.DAOProduto;
 import daodb4o.DAOTipoProduto;
 import daodb4o.DAOVenda;
 import daodb4o.DAOUsuario;
@@ -15,9 +15,9 @@ import models.Usuario;
 public class Fachada {
 	private Fachada() {}
 
-	private static DAOproduto daoproduto = new DAOproduto();  
+	private static DAOProduto DAOProduto = new DAOProduto();  
 	private static DAOTipoProduto daotipoproduto = new DAOTipoProduto(); 
-	private static DAOVenda daocliente = new DAOVenda();
+	private static DAOVenda daovenda = new DAOVenda();
 	private static DAOUsuario daousuario = new DAOUsuario();
 
 	public static void inicializar(){
@@ -30,175 +30,175 @@ public class Fachada {
 
 	public static void cadastrarProduto(String nome, double preco, String nometipoproduto) throws Exception{
 		DAO.begin();
-		Produto produto = daoproduto.read(nome);
-		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto(nometipoproduto);
+		Produto produto = DAOProduto.read(nome);
+		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
 		if (produto!=null)
 			throw new Exception("Produto já cadastrado:" + nome);
 		if (tipoproduto == null) throw new Exception("TipoProduto " + nometipoproduto + " inexistente" );
 		produto = new Produto(nome, preco, tipoproduto);
 
-		daoproduto.create(produto);
+		DAOProduto.create(produto);
 		DAO.commit();
 	}
 
 	public static void cadastrarTipoProduto(String nome) throws Exception{
 		DAO.begin();
 		TipoProduto tipoproduto = daotipoproduto.read(nome);
-		if (produto!=null)
+		if (tipoproduto!=null)
 			throw new Exception("TipoProduto já cadastrado:" + nome);
 		tipoproduto = new TipoProduto(nome);
 
-		daoproduto.create(tipoproduto);
+		daotipoproduto.create(tipoproduto);
 		DAO.commit();
 	}
 
-	public static void cadastrarVenda(String data, String data2) throws Exception{
-		DAO.begin();
-		Carro car =  daocarro.read(placa);
-		if(car==null) 
-			throw new Exception ("carro incorreto para aluguel "+placa);
-		if(car.isAlugado()) 
-			throw new Exception ("carro ja esta alugado:"+placa);
+	// public static void cadastrarVenda(String data, String data2) throws Exception{
+	// 	DAO.begin();
+	// 	Carro car =  daocarro.read(placa);
+	// 	if(car==null) 
+	// 		throw new Exception ("carro incorreto para aluguel "+placa);
+	// 	if(car.isAlugado()) 
+	// 		throw new Exception ("carro ja esta alugado:"+placa);
 
-		Cliente cli = daocliente.read(cpf);
-		if(cli==null) 
-			throw new Exception ("cliente incorreto para aluguel " + cpf);
+	// 	Cliente cli = daocliente.read(cpf);
+	// 	if(cli==null) 
+	// 		throw new Exception ("cliente incorreto para aluguel " + cpf);
 
-		Aluguel aluguel = new Aluguel(data1,data2, diaria);
-		aluguel.setCarro(car);
-		aluguel.setCliente(cli);
-		car.adicionar(aluguel);
-		car.setAlugado(true);
-		cli.adicionar(aluguel);
+	// 	Aluguel aluguel = new Aluguel(data1,data2, diaria);
+	// 	aluguel.setCarro(car);
+	// 	aluguel.setCliente(cli);
+	// 	car.adicionar(aluguel);
+	// 	car.setAlugado(true);
+	// 	cli.adicionar(aluguel);
 
-		daoaluguel.create(aluguel);
-		daocarro.update(car);
-		daocliente.update(cli);
-		DAO.commit();
-		return aluguel;
-	}
+	// 	daoaluguel.create(aluguel);
+	// 	daocarro.update(car);
+	// 	daocliente.update(cli);
+	// 	DAO.commit();
+	// 	return aluguel;
+	// }
 
-	public static void devolverCarro(String placa) throws Exception{
-		DAO.begin();
-		Carro car =  daocarro.read(placa);
-		if(car==null) 
-			throw new Exception ("carro incorreto para devolucao");
+	// public static void devolverCarro(String placa) throws Exception{
+	// 	DAO.begin();
+	// 	Carro car =  daocarro.read(placa);
+	// 	if(car==null) 
+	// 		throw new Exception ("carro incorreto para devolucao");
 
-		if(car.getAlugueis().isEmpty()) 
-			throw new Exception ("carro nao pode ser devolvido - nao esta alugado");
+	// 	if(car.getAlugueis().isEmpty()) 
+	// 		throw new Exception ("carro nao pode ser devolvido - nao esta alugado");
 
-		car.setAlugado(false);
-		// obter o ultimo aluguel do carro
-		Aluguel alug = car.getAlugueis().get(car.getAlugueis().size()-1);
-		alug.setFinalizado(true);
+	// 	car.setAlugado(false);
+	// 	// obter o ultimo aluguel do carro
+	// 	Aluguel alug = car.getAlugueis().get(car.getAlugueis().size()-1);
+	// 	alug.setFinalizado(true);
 
-		daocarro.update(car);
-		DAO.commit();
-	}
+	// 	daocarro.update(car);
+	// 	DAO.commit();
+	// }
 
-	public static void excluirCarro(String placa) throws Exception{
-		DAO.begin();
-		Carro car =  daocarro.read(placa);
-		if(car==null) 
-			throw new Exception ("carro incorreto para exclusao " + placa);
+	// public static void excluirCarro(String placa) throws Exception{
+	// 	DAO.begin();
+	// 	Carro car =  daocarro.read(placa);
+	// 	if(car==null) 
+	// 		throw new Exception ("carro incorreto para exclusao " + placa);
 
-		if(! car.isAlugado()) 
-			throw new Exception ("carro alugado nao pode ser excluido " + placa);
+	// 	if(! car.isAlugado()) 
+	// 		throw new Exception ("carro alugado nao pode ser excluido " + placa);
 
 
-		//alterar os clientes dos alugueis do carro
-		for (Aluguel a : car.getAlugueis()) {
-			Cliente cli = a.getCliente();
-			cli.remover(a);
-			//atualizar o cliente no banco
-			daocliente.update(cli);
-			//apagar o aluguel
-			daoaluguel.delete(a);
-		}
+	// 	//alterar os clientes dos alugueis do carro
+	// 	for (Aluguel a : car.getAlugueis()) {
+	// 		Cliente cli = a.getCliente();
+	// 		cli.remover(a);
+	// 		//atualizar o cliente no banco
+	// 		daocliente.update(cli);
+	// 		//apagar o aluguel
+	// 		daoaluguel.delete(a);
+	// 	}
 
-		//apagar carro e seus alugueis em cascata
-		daocarro.delete(car);
-		DAO.commit();
-	}
+	// 	//apagar carro e seus alugueis em cascata
+	// 	daocarro.delete(car);
+	// 	DAO.commit();
+	// }
 
-	public static Cliente cadastrarCliente(String nome, String cpf) throws Exception{
-		DAO.begin();
-		Cliente cli = daocliente.read(cpf);
-		if (cli!=null)
-			throw new Exception("Pessoa ja cadastrado:" + cpf);
-		cli = new Cliente(nome, cpf);
+	// public static Cliente cadastrarCliente(String nome, String cpf) throws Exception{
+	// 	DAO.begin();
+	// 	Cliente cli = daocliente.read(cpf);
+	// 	if (cli!=null)
+	// 		throw new Exception("Pessoa ja cadastrado:" + cpf);
+	// 	cli = new Cliente(nome, cpf);
 
-		daocliente.create(cli);
-		DAO.commit();
-		return cli;
-	}
-	public static void excluirCliente(String cpf) throws Exception{
-		DAO.begin();
-		Cliente cli =  daocliente.read(cpf);
-		if(cli==null) 
-			throw new Exception ("cliente incorreto para exclusao " + cpf);
+	// 	daocliente.create(cli);
+	// 	DAO.commit();
+	// 	return cli;
+	// }
+	// public static void excluirCliente(String cpf) throws Exception{
+	// 	DAO.begin();
+	// 	Cliente cli =  daocliente.read(cpf);
+	// 	if(cli==null) 
+	// 		throw new Exception ("cliente incorreto para exclusao " + cpf);
 
-		if(!cli.getAlugueis().isEmpty()) {
-			List<Aluguel> alugueis = cli.getAlugueis();
-			Aluguel ultimo = alugueis.get(alugueis.size()-1);
-			if(ultimo !=null && !ultimo.isFinalizado()) 
-				throw new Exception ("Nao pode excluir cliente com carro alugado: " + cpf);
-		}
+	// 	if(!cli.getAlugueis().isEmpty()) {
+	// 		List<Aluguel> alugueis = cli.getAlugueis();
+	// 		Aluguel ultimo = alugueis.get(alugueis.size()-1);
+	// 		if(ultimo !=null && !ultimo.isFinalizado()) 
+	// 			throw new Exception ("Nao pode excluir cliente com carro alugado: " + cpf);
+	// 	}
 		
-		//alterar os carros dos alugueis 
-		for (Aluguel a : cli.getAlugueis()) {
-			Carro car = a.getCarro();
-			car.remover(a);
-			daocarro.update(car);
-			daoaluguel.delete(a);
-		}
+	// 	//alterar os carros dos alugueis 
+	// 	for (Aluguel a : cli.getAlugueis()) {
+	// 		Carro car = a.getCarro();
+	// 		car.remover(a);
+	// 		daocarro.update(car);
+	// 		daoaluguel.delete(a);
+	// 	}
 
-		//apagar carro e seus alugueis em cascata
-		daocliente.delete(cli);
-		DAO.commit();
-	}
+	// 	//apagar carro e seus alugueis em cascata
+	// 	daocliente.delete(cli);
+	// 	DAO.commit();
+	// }
 
-	public static void excluirAluguel(int id) throws Exception{
-		DAO.begin();
-		Aluguel aluguel =  daoaluguel.read(id);
-		if(aluguel==null) 
-			throw new Exception ("aluguel incorreto para exclusao " + id);
+	// public static void excluirAluguel(int id) throws Exception{
+	// 	DAO.begin();
+	// 	Aluguel aluguel =  daoaluguel.read(id);
+	// 	if(aluguel==null) 
+	// 		throw new Exception ("aluguel incorreto para exclusao " + id);
 
-		if(! aluguel.isFinalizado()) 
-			throw new Exception ("aluguel nao finalizado nao pode ser excluido " + id);
+	// 	if(! aluguel.isFinalizado()) 
+	// 		throw new Exception ("aluguel nao finalizado nao pode ser excluido " + id);
 
-		//alterar os clientes dos alugueis do carro
-		Cliente cli = aluguel.getCliente();
-		Carro car = aluguel.getCarro();
-		cli.remover(aluguel);
-		car.remover(aluguel);
+	// 	//alterar os clientes dos alugueis do carro
+	// 	Cliente cli = aluguel.getCliente();
+	// 	Carro car = aluguel.getCarro();
+	// 	cli.remover(aluguel);
+	// 	car.remover(aluguel);
 
-		daocliente.update(cli);
-		daocarro.update(car);
-		daoaluguel.delete(aluguel);
-		DAO.commit();
-	}
+	// 	daocliente.update(cli);
+	// 	daocarro.update(car);
+	// 	daoaluguel.delete(aluguel);
+	// 	DAO.commit();
+	// }
 
-	public static List<Cliente>  listarClientes(){
-		DAO.begin();
-		List<Cliente> resultados =  daocliente.readAll();
-		DAO.commit();
-		return resultados;
-	} 
+	// public static List<Cliente>  listarClientes(){
+	// 	DAO.begin();
+	// 	List<Cliente> resultados =  daocliente.readAll();
+	// 	DAO.commit();
+	// 	return resultados;
+	// } 
 
-	public static List<Carro>  listarCarros(){
-		DAO.begin();
-		List<Carro> resultados =  daocarro.readAll();
-		DAO.commit();
-		return resultados;
-	}
+	// public static List<Carro>  listarCarros(){
+	// 	DAO.begin();
+	// 	List<Carro> resultados =  daocarro.readAll();
+	// 	DAO.commit();
+	// 	return resultados;
+	// }
 
-	public static List<Aluguel> listarAlugueis(){
-		DAO.begin();
-		List<Aluguel> resultados =  daoaluguel.readAll();
-		DAO.commit();
-		return resultados;
-	}
+	// public static List<Aluguel> listarAlugueis(){
+	// 	DAO.begin();
+	// 	List<Aluguel> resultados =  daoaluguel.readAll();
+	// 	DAO.commit();
+	// 	return resultados;
+	// }
 
 	public static List<Usuario>  listarUsuarios(){
 		DAO.begin();
@@ -207,33 +207,33 @@ public class Fachada {
 		return resultados;
 	} 
 
-	public static List<Aluguel> alugueisModelo(String modelo){	
-		DAO.begin();
-		List<Aluguel> resultados =  daoaluguel.alugueisModelo(modelo);
-		DAO.commit();
-		return resultados;
-	}
+	// public static List<Aluguel> alugueisModelo(String modelo){	
+	// 	DAO.begin();
+	// 	List<Aluguel> resultados =  daoaluguel.alugueisModelo(modelo);
+	// 	DAO.commit();
+	// 	return resultados;
+	// }
 
-	public static List<Aluguel> alugueisFinalizados(){	
-		DAO.begin();
-		List<Aluguel> resultados =  daoaluguel.alugueisFinalizados();
-		DAO.commit();
-		return resultados;
-	}
+	// public static List<Aluguel> alugueisFinalizados(){	
+	// 	DAO.begin();
+	// 	List<Aluguel> resultados =  daoaluguel.alugueisFinalizados();
+	// 	DAO.commit();
+	// 	return resultados;
+	// }
 
-	public static List<Carro>  carrosNAlugueis(int n){	
-		DAO.begin();
-		List<Carro> resultados =  daocarro.carrosNAlugueis(n);
-		DAO.commit();
-		return resultados;
-	}
+	// public static List<Carro>  carrosNAlugueis(int n){	
+	// 	DAO.begin();
+	// 	List<Carro> resultados =  daocarro.carrosNAlugueis(n);
+	// 	DAO.commit();
+	// 	return resultados;
+	// }
 
-	public static Carro localizarCarro(String placa){
-		return daocarro.read(placa);
-	}
-	public static Cliente localizarCliente(String cpf){
-		return daocliente.read(cpf);
-	}
+	// public static Carro localizarCarro(String placa){
+	// 	return daocarro.read(placa);
+	// }
+	// public static Cliente localizarCliente(String cpf){
+	// 	return daocliente.read(cpf);
+	// }
 
 	
 	//------------------Usuario------------------------------------
