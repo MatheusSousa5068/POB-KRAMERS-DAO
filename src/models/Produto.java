@@ -9,6 +9,7 @@ public class Produto {
         this.nome = nome;
         this.preco = preco;
         this.tipoproduto = tipoproduto;
+        this.tipoproduto.adicionar(this); // Relacionamento Inverso
     }
 
     public TipoProduto getTipoproduto() {
@@ -16,7 +17,8 @@ public class Produto {
 	}
 
     public void setTipoproduto(TipoProduto tipoproduto) {
-	this.tipoproduto = tipoproduto;
+	    this.tipoproduto = tipoproduto;
+        this.tipoproduto.adicionar(this);
     }
 	
 	public String getNome() {

@@ -11,6 +11,7 @@ public class Cadastrar {
 			Fachada.cadastrarTipoProduto("Frutas");
 			Fachada.cadastrarTipoProduto("Bebidas");
 			Fachada.cadastrarTipoProduto("Doces");
+			Fachada.cadastrarTipoProduto("Diversos");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

@@ -1,5 +1,6 @@
 package regras_negocio;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import daodb4o.DAO;
@@ -13,38 +14,41 @@ import models.Venda;
 import models.Usuario;
 
 public class Fachada {
-	private Fachada() {}
+	private Fachada() {
+	}
 
-	private static DAOProduto DAOProduto = new DAOProduto();  
-	private static DAOTipoProduto daotipoproduto = new DAOTipoProduto(); 
+	private static DAOProduto daoproduto = new DAOProduto();
+	private static DAOTipoProduto daotipoproduto = new DAOTipoProduto();
 	private static DAOVenda daovenda = new DAOVenda();
 	private static DAOUsuario daousuario = new DAOUsuario();
+	public static Usuario logado;
 
-	public static void inicializar(){
+	public static void inicializar() {
 		DAO.open();
 	}
-	public static void finalizar(){
+
+	public static void finalizar() {
 		DAO.close();
 	}
 
-
-	public static void cadastrarProduto(String nome, double preco, String nometipoproduto) throws Exception{
+	public static void cadastrarProduto(String nome, double preco, String nometipoproduto) throws Exception {
 		DAO.begin();
-		Produto produto = DAOProduto.read(nome);
+		Produto produto = daoproduto.read(nome);
 		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
-		if (produto!=null)
+		if (produto != null)
 			throw new Exception("Produto já cadastrado:" + nome);
-		if (tipoproduto == null) throw new Exception("TipoProduto " + nometipoproduto + " inexistente" );
+		if (tipoproduto == null)
+			throw new Exception("TipoProduto " + nometipoproduto + " inexistente");
 		produto = new Produto(nome, preco, tipoproduto);
 
-		DAOProduto.create(produto);
+		daoproduto.create(produto);
 		DAO.commit();
 	}
 
-	public static void cadastrarTipoProduto(String nome) throws Exception{
+	public static void cadastrarTipoProduto(String nome) throws Exception {
 		DAO.begin();
 		TipoProduto tipoproduto = daotipoproduto.read(nome);
-		if (tipoproduto!=null)
+		if (tipoproduto != null)
 			throw new Exception("TipoProduto já cadastrado:" + nome);
 		tipoproduto = new TipoProduto(nome);
 
@@ -52,195 +56,137 @@ public class Fachada {
 		DAO.commit();
 	}
 
-	// public static void cadastrarVenda(String data, String data2) throws Exception{
-	// 	DAO.begin();
-	// 	Carro car =  daocarro.read(placa);
-	// 	if(car==null) 
-	// 		throw new Exception ("carro incorreto para aluguel "+placa);
-	// 	if(car.isAlugado()) 
-	// 		throw new Exception ("carro ja esta alugado:"+placa);
-
-	// 	Cliente cli = daocliente.read(cpf);
-	// 	if(cli==null) 
-	// 		throw new Exception ("cliente incorreto para aluguel " + cpf);
-
-	// 	Aluguel aluguel = new Aluguel(data1,data2, diaria);
-	// 	aluguel.setCarro(car);
-	// 	aluguel.setCliente(cli);
-	// 	car.adicionar(aluguel);
-	// 	car.setAlugado(true);
-	// 	cli.adicionar(aluguel);
-
-	// 	daoaluguel.create(aluguel);
-	// 	daocarro.update(car);
-	// 	daocliente.update(cli);
-	// 	DAO.commit();
-	// 	return aluguel;
-	// }
-
-	// public static void devolverCarro(String placa) throws Exception{
-	// 	DAO.begin();
-	// 	Carro car =  daocarro.read(placa);
-	// 	if(car==null) 
-	// 		throw new Exception ("carro incorreto para devolucao");
-
-	// 	if(car.getAlugueis().isEmpty()) 
-	// 		throw new Exception ("carro nao pode ser devolvido - nao esta alugado");
-
-	// 	car.setAlugado(false);
-	// 	// obter o ultimo aluguel do carro
-	// 	Aluguel alug = car.getAlugueis().get(car.getAlugueis().size()-1);
-	// 	alug.setFinalizado(true);
-
-	// 	daocarro.update(car);
-	// 	DAO.commit();
-	// }
-
-	// public static void excluirCarro(String placa) throws Exception{
-	// 	DAO.begin();
-	// 	Carro car =  daocarro.read(placa);
-	// 	if(car==null) 
-	// 		throw new Exception ("carro incorreto para exclusao " + placa);
-
-	// 	if(! car.isAlugado()) 
-	// 		throw new Exception ("carro alugado nao pode ser excluido " + placa);
-
-
-	// 	//alterar os clientes dos alugueis do carro
-	// 	for (Aluguel a : car.getAlugueis()) {
-	// 		Cliente cli = a.getCliente();
-	// 		cli.remover(a);
-	// 		//atualizar o cliente no banco
-	// 		daocliente.update(cli);
-	// 		//apagar o aluguel
-	// 		daoaluguel.delete(a);
-	// 	}
-
-	// 	//apagar carro e seus alugueis em cascata
-	// 	daocarro.delete(car);
-	// 	DAO.commit();
-	// }
-
-	// public static Cliente cadastrarCliente(String nome, String cpf) throws Exception{
-	// 	DAO.begin();
-	// 	Cliente cli = daocliente.read(cpf);
-	// 	if (cli!=null)
-	// 		throw new Exception("Pessoa ja cadastrado:" + cpf);
-	// 	cli = new Cliente(nome, cpf);
-
-	// 	daocliente.create(cli);
-	// 	DAO.commit();
-	// 	return cli;
-	// }
-	// public static void excluirCliente(String cpf) throws Exception{
-	// 	DAO.begin();
-	// 	Cliente cli =  daocliente.read(cpf);
-	// 	if(cli==null) 
-	// 		throw new Exception ("cliente incorreto para exclusao " + cpf);
-
-	// 	if(!cli.getAlugueis().isEmpty()) {
-	// 		List<Aluguel> alugueis = cli.getAlugueis();
-	// 		Aluguel ultimo = alugueis.get(alugueis.size()-1);
-	// 		if(ultimo !=null && !ultimo.isFinalizado()) 
-	// 			throw new Exception ("Nao pode excluir cliente com carro alugado: " + cpf);
-	// 	}
-		
-	// 	//alterar os carros dos alugueis 
-	// 	for (Aluguel a : cli.getAlugueis()) {
-	// 		Carro car = a.getCarro();
-	// 		car.remover(a);
-	// 		daocarro.update(car);
-	// 		daoaluguel.delete(a);
-	// 	}
-
-	// 	//apagar carro e seus alugueis em cascata
-	// 	daocliente.delete(cli);
-	// 	DAO.commit();
-	// }
-
-	// public static void excluirAluguel(int id) throws Exception{
-	// 	DAO.begin();
-	// 	Aluguel aluguel =  daoaluguel.read(id);
-	// 	if(aluguel==null) 
-	// 		throw new Exception ("aluguel incorreto para exclusao " + id);
-
-	// 	if(! aluguel.isFinalizado()) 
-	// 		throw new Exception ("aluguel nao finalizado nao pode ser excluido " + id);
-
-	// 	//alterar os clientes dos alugueis do carro
-	// 	Cliente cli = aluguel.getCliente();
-	// 	Carro car = aluguel.getCarro();
-	// 	cli.remover(aluguel);
-	// 	car.remover(aluguel);
-
-	// 	daocliente.update(cli);
-	// 	daocarro.update(car);
-	// 	daoaluguel.delete(aluguel);
-	// 	DAO.commit();
-	// }
-
-	// public static List<Cliente>  listarClientes(){
-	// 	DAO.begin();
-	// 	List<Cliente> resultados =  daocliente.readAll();
-	// 	DAO.commit();
-	// 	return resultados;
-	// } 
-
-	// public static List<Carro>  listarCarros(){
-	// 	DAO.begin();
-	// 	List<Carro> resultados =  daocarro.readAll();
-	// 	DAO.commit();
-	// 	return resultados;
-	// }
-
-	// public static List<Aluguel> listarAlugueis(){
-	// 	DAO.begin();
-	// 	List<Aluguel> resultados =  daoaluguel.readAll();
-	// 	DAO.commit();
-	// 	return resultados;
-	// }
-
-	public static List<Usuario>  listarUsuarios(){
+	public static Venda cadastrarVenda(String data, double desconto) throws Exception {
 		DAO.begin();
-		List<Usuario> resultados =  daousuario.readAll();
+
+		Venda venda = new Venda(data, desconto);
+
+		daovenda.create(venda);
+		DAO.commit();
+
+		return venda;
+	}
+
+	public static void adicionarProdutoEmVenda(int idVenda, String nomeProduto) throws Exception {
+		DAO.begin();
+		Venda venda = daovenda.read(idVenda);
+		if (venda == null)
+			throw new Exception("Venda com id" + idVenda + "não existe");
+
+		Produto produto = daoproduto.read(nomeProduto);
+		if (produto == null)
+			throw new Exception("Produto não existe");
+
+		venda.adicionar(produto);
+		daovenda.update(venda);
+		DAO.commit();
+	}
+
+	public static void removerProdutoDeVenda(int idVenda, String nomeProduto) throws Exception {
+		DAO.begin();
+		Venda venda = daovenda.read(idVenda);
+		if (venda == null)
+			throw new Exception("Venda com id" + idVenda + "não existe");
+
+		for (Produto p : venda.getProdutos()) {
+			if (p.getNome().equals(nomeProduto)) {
+				venda.remover(p);
+				daovenda.update(venda);
+				return;
+			}
+		}
+
+		DAO.commit();
+
+		throw new Exception("Produto não existe em venda");
+	}
+
+	public static List<Venda> vendaDataX(String data) {
+		DAO.begin();
+		List<Venda> vendas = daovenda.vendasDataX(data);
+		DAO.commit();
+
+		return vendas;
+	}
+
+	public static List<Venda> vendasComMaisDeNProdutos(int Qntd) {
+		DAO.begin();
+		List<Venda> vendas = daovenda.vendasComMaisDeNProdutos(Qntd);
+		DAO.commit();
+
+		return vendas;
+	}
+
+	public static List<Venda> vendasComProdutoDePrecoX(double preco) {
+		DAO.begin();
+		List<Venda> vendas = daovenda.vendasComProdutoDePrecoX(preco);
+		DAO.commit();
+
+		return vendas;
+	}
+
+	public static void excluirTipoProduto(String nomeTipoProduto) throws Exception {
+		DAO.begin();
+		TipoProduto tipoProduto = daotipoproduto.read(nomeTipoProduto);
+		if (tipoProduto == null)
+			throw new Exception("Tipo de produto não existe: " + nomeTipoProduto);
+
+		TipoProduto secundario = daotipoproduto.read("Diversos");
+
+		List<Produto> produtosParaMover = new ArrayList<>();
+
+		// Adicione os produtos a serem movidos à lista temporária
+		for (Produto p : tipoProduto.getProdutos()) {
+			p.setTipoproduto(secundario);
+			produtosParaMover.add(p);
+		}
+
+		tipoProduto.getProdutos().clear();
+
+		daotipoproduto.update(tipoProduto);
+		daotipoproduto.update(secundario);
+
+		for (Produto p : produtosParaMover) {
+			daoproduto.update(p);
+		}
+
+		daotipoproduto.delete(tipoProduto);
+		DAO.commit();
+	}
+
+	public static List<Produto> listarProdutos() {
+		DAO.begin();
+		List<Produto> resultados = daoproduto.readAll();
 		DAO.commit();
 		return resultados;
-	} 
+	}
 
-	// public static List<Aluguel> alugueisModelo(String modelo){	
-	// 	DAO.begin();
-	// 	List<Aluguel> resultados =  daoaluguel.alugueisModelo(modelo);
-	// 	DAO.commit();
-	// 	return resultados;
-	// }
+	public static List<TipoProduto> listarTipoProdutos() {
+		DAO.begin();
+		List<TipoProduto> resultados = daotipoproduto.readAll();
+		DAO.commit();
+		return resultados;
+	}
 
-	// public static List<Aluguel> alugueisFinalizados(){	
-	// 	DAO.begin();
-	// 	List<Aluguel> resultados =  daoaluguel.alugueisFinalizados();
-	// 	DAO.commit();
-	// 	return resultados;
-	// }
+	public static List<Venda> listarVendas() {
+		DAO.begin();
+		List<Venda> resultados = daovenda.readAll();
+		DAO.commit();
+		return resultados;
+	}
 
-	// public static List<Carro>  carrosNAlugueis(int n){	
-	// 	DAO.begin();
-	// 	List<Carro> resultados =  daocarro.carrosNAlugueis(n);
-	// 	DAO.commit();
-	// 	return resultados;
-	// }
+	public static List<Usuario> listarUsuarios() {
+		DAO.begin();
+		List<Usuario> resultados = daousuario.readAll();
+		DAO.commit();
+		return resultados;
+	}
 
-	// public static Carro localizarCarro(String placa){
-	// 	return daocarro.read(placa);
-	// }
-	// public static Cliente localizarCliente(String cpf){
-	// 	return daocliente.read(cpf);
-	// }
-
-	
-	//------------------Usuario------------------------------------
-	public static Usuario cadastrarUsuario(String nome, String senha) throws Exception{
+	// ------------------Usuario------------------------------------
+	public static Usuario cadastrarUsuario(String nome, String senha) throws Exception {
 		DAO.begin();
 		Usuario usu = daousuario.read(nome);
-		if (usu!=null)
+		if (usu != null)
 			throw new Exception("Usuario ja cadastrado:" + nome);
 		usu = new Usuario(nome, senha);
 
@@ -248,11 +194,12 @@ public class Fachada {
 		DAO.commit();
 		return usu;
 	}
+
 	public static Usuario localizarUsuario(String nome, String senha) {
 		Usuario usu = daousuario.read(nome);
-		if (usu==null)
+		if (usu == null)
 			return null;
-		if (! usu.getSenha().equals(senha))
+		if (!usu.getSenha().equals(senha))
 			return null;
 		return usu;
 	}
