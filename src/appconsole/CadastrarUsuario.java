@@ -2,14 +2,16 @@ package appconsole;
 
 import regras_negocio.Fachada;
 
-public class Alterar {
-	
-	public Alterar() {
+public class CadastrarUsuario {
+
+	public CadastrarUsuario() {
 		try {
 			Fachada.inicializar();
-			Fachada.removerProdutoDeVenda(2, "Chocolate");		
-			System.out.println("chocolate removido de venda 2");
-			
+
+			System.out.println("cadastrando usuarios...");
+			Fachada.cadastrarUsuario("matheus", "1234");
+			Fachada.cadastrarUsuario("marcela", "5678");
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -18,7 +20,9 @@ public class Alterar {
 		System.out.println("\nfim do programa !");
 	}
 
+
+
 	public static void main(String[] args) {
-		new Alterar();
+		new CadastrarUsuario();
 	}
 }
