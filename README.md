@@ -1,5 +1,3 @@
-# README.md
-
 # Projeto de Persistência de Objetos em Java com db4oDAO
 
 Este é um projeto escolar de Persistência de Objetos em Java, que utiliza o db4oDAO como mecanismo de persistência. O objetivo deste projeto é demonstrar a capacidade de armazenar, recuperar e manipular objetos em um banco de dados orientado a objetos usando a biblioteca db4o.
