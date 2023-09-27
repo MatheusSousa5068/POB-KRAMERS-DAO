@@ -26,7 +26,7 @@ O projeto é composto por três principais entidades:
 
 ## **Licença**
 
-Este projeto está licenciado sob a **[Licença MIT](https://chat.openai.com/c/LICENSE.md)**.
+Este projeto está licenciado sob a **[Licença MIT](https://opensource.org/license/mit/)**.
 
 ## **Agradecimentos**
 
