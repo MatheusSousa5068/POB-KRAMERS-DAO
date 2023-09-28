@@ -20,7 +20,6 @@ public class Produto {
         this.tipoproduto = tipoproduto;
         tipoproduto.adicionar(this);
     }
-    
 	
 	public String getNome() {
 	return nome;

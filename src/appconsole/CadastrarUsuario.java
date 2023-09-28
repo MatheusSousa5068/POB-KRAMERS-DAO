@@ -21,7 +21,6 @@ public class CadastrarUsuario {
 	}
 
 
-
 	public static void main(String[] args) {
 		new CadastrarUsuario();
 	}

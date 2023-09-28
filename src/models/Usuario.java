@@ -31,5 +31,4 @@ public class Usuario {
 		return "Usuario [nome=" + nome + ", senha=" + senha + "]";
 	}
 	
-	
 }

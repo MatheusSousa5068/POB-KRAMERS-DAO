@@ -59,7 +59,6 @@ public class DAOVenda  extends DAO<Venda>{
 	}
 
 
-
 	public List<Venda> vendasComProdutoP(String nomeProdutoP) {
 		Query q1 = manager.query();
 		q1.constrain(Venda.class);

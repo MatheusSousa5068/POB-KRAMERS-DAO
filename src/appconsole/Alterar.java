@@ -3,7 +3,6 @@ package appconsole;
 import regras_negocio.Fachada;
 
 public class Alterar {
-	
 	public Alterar() {
 		try {
 			Fachada.inicializar();

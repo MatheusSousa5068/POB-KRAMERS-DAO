@@ -13,7 +13,6 @@ import models.Venda;
 public class Util {
 	private static ObjectContainer manager=null;
 
-	
 	public static ObjectContainer conectarBanco(){
 		if (manager != null)
 			return manager;		//ja tem uma conexao

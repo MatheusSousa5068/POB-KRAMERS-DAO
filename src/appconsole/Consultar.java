@@ -1,8 +1,6 @@
 package appconsole;
 
 import models.Venda;
-import models.Produto;
-import models.TipoProduto;
 import regras_negocio.Fachada;
 
 public class Consultar {
@@ -25,7 +23,6 @@ public class Consultar {
 			System.out.println("\nVends com produtos de preço de R$4,50");
 			for(Venda v : Fachada.vendasComProdutoDePrecoX(4.5))
 				System.out.println(v);
-
 
 			//System.out.println("clientes que possuem 2 alugueis");
 		} catch (Exception e) {

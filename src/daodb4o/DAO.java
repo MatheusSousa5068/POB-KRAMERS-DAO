@@ -119,6 +119,5 @@ public abstract class DAO<T> implements DAOInterface<T> {
 				}
 		}
 	}
-
 }
 

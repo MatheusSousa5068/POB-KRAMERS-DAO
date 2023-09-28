@@ -47,7 +47,6 @@ public class Listar {
 		Util.desconectar();
 		System.out.println("\nfim do programa !");
 	}
-
 	public static void main(String[] args) {
 		new Listar();
 	}

@@ -3,7 +3,6 @@ package appconsole;
 import regras_negocio.Fachada;
 
 public class Deletar2 {
-
 	public Deletar2() {
 		try {
 			Fachada.inicializar();

@@ -19,5 +19,4 @@ public class DAOProduto  extends DAO<Produto>{
 		else
 			return null;
 	}
-	
 }

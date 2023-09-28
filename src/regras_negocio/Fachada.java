@@ -130,8 +130,7 @@ public class Fachada {
 		DAO.begin();
 		
 		Produto produto = daoproduto.read(nomeProduto);
-		System.out.println(produto + "AAAAAA LAFAYETTE EU TE AMO PFVR ME DA PAÇOCA");
-	
+		
 		if (produto == null) {
 			throw new Exception("Produto não existe: " + nomeProduto);
 		}
@@ -149,7 +148,6 @@ public class Fachada {
 		
 		DAO.commit();
 		DAO.close();
-		
 		
 	}
 
