@@ -17,9 +17,10 @@ public class Produto {
 	}
 
     public void setTipoproduto(TipoProduto tipoproduto) {
-	    this.tipoproduto = tipoproduto;
-        this.tipoproduto.adicionar(this);
+        this.tipoproduto = tipoproduto;
+        tipoproduto.adicionar(this);
     }
+    
 	
 	public String getNome() {
 	return nome;

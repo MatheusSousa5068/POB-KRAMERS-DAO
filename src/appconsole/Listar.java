@@ -17,7 +17,7 @@ import regras_negocio.Fachada;
 public class Listar {
 
 	public Listar() {
-//		try {
+		try {
 			Fachada.inicializar();
 			System.out.println("\n---listagem de vendas:");
 			for(Venda v: Fachada.listarVendas())
@@ -40,9 +40,9 @@ public class Listar {
 			for(Usuario u: Fachada.listarUsuarios())
 				System.out.println(u);
 			
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//		}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 
 		Util.desconectar();
 		System.out.println("\nfim do programa !");

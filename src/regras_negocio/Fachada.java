@@ -121,8 +121,36 @@ public class Fachada {
 		DAO.begin();
 		List<Venda> vendas = daovenda.vendasComProdutoDePrecoX(preco);
 		DAO.commit();
+		DAO.close();
 
 		return vendas;
+	}
+
+	public static void excluirProduto(String nomeProduto) throws Exception {
+		DAO.begin();
+		
+		Produto produto = daoproduto.read(nomeProduto);
+		System.out.println(produto + "AAAAAA LAFAYETTE EU TE AMO PFVR ME DA PAÇOCA");
+	
+		if (produto == null) {
+			throw new Exception("Produto não existe: " + nomeProduto);
+		}
+
+		List<Venda> vendas = daovenda.vendasComProdutoP(nomeProduto);
+		for(Venda v: vendas) {
+			v.remover(produto);
+			daovenda.update(v);
+		}
+	
+		TipoProduto tipoProduto = produto.getTipoproduto();
+		tipoProduto.remover(produto);
+		daotipoproduto.update(tipoProduto);
+		daoproduto.delete(produto);
+		
+		DAO.commit();
+		DAO.close();
+		
+		
 	}
 
 	public static void excluirTipoProduto(String nomeTipoProduto) throws Exception {
@@ -133,27 +161,25 @@ public class Fachada {
 
 		TipoProduto secundario = daotipoproduto.read("Diversos");
 
-		List<Produto> produtosParaMover = new ArrayList<>();
+		List<Produto> produtosParaMover = new ArrayList<>(tipoProduto.getProdutos());
 
-		// Adicione os produtos a serem movidos à lista temporária
-		for (Produto p : tipoProduto.getProdutos()) {
-			p.setTipoproduto(secundario);
-			produtosParaMover.add(p);
-		}
-
-		tipoProduto.getProdutos().clear();
-
-		daotipoproduto.update(tipoProduto);
-		daotipoproduto.update(secundario);
-
+		// lista temporária
 		for (Produto p : produtosParaMover) {
-			daoproduto.update(p);
+			p.setTipoproduto(secundario);
+			tipoProduto.remover(p);
+			daotipoproduto.update(tipoProduto);
+
+			daotipoproduto.update(secundario);
 		}
 
 		daotipoproduto.delete(tipoProduto);
 		DAO.commit();
+		DAO.close();
 	}
 
+
+	
+	
 	public static List<Produto> listarProdutos() {
 		DAO.begin();
 		List<Produto> resultados = daoproduto.readAll();

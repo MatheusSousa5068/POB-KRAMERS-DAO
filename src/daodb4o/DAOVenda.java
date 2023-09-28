@@ -57,6 +57,16 @@ public class DAOVenda  extends DAO<Venda>{
 
 		return resultados;
 	}
+
+
+
+	public List<Venda> vendasComProdutoP(String nomeProdutoP) {
+		Query q1 = manager.query();
+		q1.constrain(Venda.class);
+		q1.descend("produtos").descend("nome").constrain(nomeProdutoP);
+		List<Venda> resultados = q1.execute();
+		return resultados;
+	}
 }
 
 class FiltroQtndProdutosEmVenda implements Evaluation {
