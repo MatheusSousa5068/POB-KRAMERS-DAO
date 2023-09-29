@@ -1,54 +1,52 @@
+/**********************************
+ * IFPB - Curso Superior de Tec. em Sist. para Internet
+ * POB - Persistencia de Objetos
+ * Prof. Fausto Ayres
+ *
+ */
+
 package appconsole;
 
-import java.util.List;
-
-import com.db4o.ObjectContainer;
-import com.db4o.query.Query;
-
+import daodb4o.Util;
+import models.Usuario;
 import models.Produto;
 import models.TipoProduto;
 import models.Venda;
+import regras_negocio.Fachada;
 
 public class Listar {
-	protected ObjectContainer manager;
-	
+
 	public Listar() {
 		try {
-			manager = Util.conectarBanco();
-			
-			System.out.println("\n---Listagem de produtos: ");
-			Query qProduto = manager.query();
-			qProduto.constrain(Produto.class);
-			
-			List<Produto> produtos = qProduto.execute();
-			for(Produto p: produtos)
-				System.out.println(p);
-			
-			System.out.println("\n---Listagem de vendas: ");
-			Query qVenda = manager.query();
-			qVenda.constrain(Venda.class);
-			
-			List<Venda> vendas = qVenda.execute();
-			for(Venda v: vendas)
+			Fachada.inicializar();
+			System.out.println("\n---listagem de vendas:");
+			for(Venda v: Fachada.listarVendas())
 				System.out.println(v);
+
+			System.out.println("\n---listagem de produtos:");
+			for(Produto c: Fachada.listarProdutos())
+				if(c.getTipoproduto() == null) {
+					
+				} else {
+					System.out.println(c);
+				}
+				
 			
-			System.out.println("\n---Listagem de tipos de produtos: ");
-			Query qTipos = manager.query();
-			qTipos.constrain(TipoProduto.class);
-			
-			List<TipoProduto> tipos = qTipos.execute();
-			for(TipoProduto t: tipos)
-				System.out.println(t);
-			
+			System.out.println("\n---listagem de tipos de produtos:");
+			for(TipoProduto c: Fachada.listarTipoProdutos())
+				System.out.println(c);
+
+			System.out.println("\n---listagem de usuarios:");
+			for(Usuario u: Fachada.listarUsuarios())
+				System.out.println(u);
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 		Util.desconectar();
 		System.out.println("\nfim do programa !");
 	}
-	
 	public static void main(String[] args) {
 		new Listar();
 	}

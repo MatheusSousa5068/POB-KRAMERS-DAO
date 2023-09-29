@@ -2,13 +2,15 @@ package appconsole;
 
 import regras_negocio.Fachada;
 
-public class Deletar {
+public class CadastrarUsuario {
 
-	public Deletar() {
+	public CadastrarUsuario() {
 		try {
 			Fachada.inicializar();
-			Fachada.excluirTipoProduto("Doces");		 
-			System.out.println("Doces excluído");
+
+			System.out.println("cadastrando usuarios...");
+			Fachada.cadastrarUsuario("matheus", "1234");
+			Fachada.cadastrarUsuario("marcela", "5678");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -17,7 +19,9 @@ public class Deletar {
 		Fachada.finalizar();
 		System.out.println("\nfim do programa !");
 	}
+
+
 	public static void main(String[] args) {
-		new Deletar();
+		new CadastrarUsuario();
 	}
 }

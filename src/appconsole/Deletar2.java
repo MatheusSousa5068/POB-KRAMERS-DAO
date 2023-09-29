@@ -2,13 +2,11 @@ package appconsole;
 
 import regras_negocio.Fachada;
 
-public class Deletar {
-
-	public Deletar() {
+public class Deletar2 {
+	public Deletar2() {
 		try {
 			Fachada.inicializar();
-			Fachada.excluirTipoProduto("Doces");		 
-			System.out.println("Doces excluído");
+            Fachada.excluirProduto("Chocolate");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -17,7 +15,8 @@ public class Deletar {
 		Fachada.finalizar();
 		System.out.println("\nfim do programa !");
 	}
+
 	public static void main(String[] args) {
-		new Deletar();
+		new Deletar2();
 	}
 }

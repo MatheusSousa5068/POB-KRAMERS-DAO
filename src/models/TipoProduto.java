@@ -24,7 +24,6 @@ public class TipoProduto {
     public void remover(Produto p){
         produtos.remove(p);
     }
-    
 
     public List<Produto> getProdutos() {
 	return produtos;
