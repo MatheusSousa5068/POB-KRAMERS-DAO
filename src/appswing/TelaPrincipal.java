@@ -1,8 +1,8 @@
-package appswing;
+ package appswing;
 /**********************************
  * IFPB - Curso Superior de Tec. em Sist. para Internet
  * POO
- * Prof. Fausto Maranhão Ayres
+ * Prof. Fausto Maranhï¿½o Ayres
  **********************************/
 
 import java.awt.Font;
@@ -78,11 +78,11 @@ public class TelaPrincipal {
 
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
-		mnCarro = new JMenu("Carro");
+		mnCarro = new JMenu("Produto");
 		mnCarro.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				TelaCarro tela = new TelaCarro();
+				TelaProduto tela = new TelaProduto();
 			}
 		});
 		menuBar.add(mnCarro);
@@ -91,7 +91,7 @@ public class TelaPrincipal {
 		mnCliente.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				TelaCliente tela = new TelaCliente();
+				TelaTipoProduto tela = new TelaTipoProduto();
 			}
 		});
 		menuBar.add(mnCliente);
