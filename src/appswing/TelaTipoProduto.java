@@ -30,27 +30,33 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.db4o.ObjectContainer;
+//import com.db4o.ObjectContainer;
 
 import models.Produto;
 import models.TipoProduto;
+import models.Venda;
 import regras_negocio.Fachada;
 
 public class TelaTipoProduto {
 	private JDialog frame;
 	private JTable table;
 	private JScrollPane scrollPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JButton button;
-	private JButton button_1;
-	private JButton button_2;
-	private JLabel label;
-	private JLabel label_2;
-	private JLabel label_3;
-	private JLabel label_4;
+	private JTextField textFieldNome;
+	private JTextField textFieldNomeTipoProduto;
+	private JButton botaoListar;
+	private JButton botaoCriarTipoProduto;
+	private JButton botaoApagarTipoProduto;
+	private JLabel labelFeedback;
+	private JLabel labelNome;
+	private JLabel labelNomeTipoProduto;
+	private JLabel labelNomeProduto;
+	private JLabel labelResultados;
 
 	private JButton button_3;
+	private JTextField textFieldNomeProduto;
+	private JButton botaoAdicionarProdutoemTipoProduto;
+	private JButton botaoRemoverProdutodeTipoProduto;
+	private JButton botaoExibirProdutos;
 
 	/**
 	 * Launch the application.
@@ -83,7 +89,7 @@ public class TelaTipoProduto {
 		frame.setModal(true);
 		
 		frame.setResizable(false);
-		frame.setTitle("Cliente");
+		frame.setTitle("TipoProduto");
 		frame.setBounds(100, 100, 729, 385);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -107,7 +113,7 @@ public class TelaTipoProduto {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				label_4.setText("selecionado="+ (String) table.getValueAt( table.getSelectedRow(), 0));
+				labelResultados.setText("selecionado="+ (String) table.getValueAt( table.getSelectedRow(), 0));
 			}
 		});
 		table.setGridColor(Color.BLACK);
@@ -123,123 +129,183 @@ public class TelaTipoProduto {
 		table.setShowGrid(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-		label = new JLabel("");		//label de mensagem
-		label.setForeground(Color.BLUE);
-		label.setBounds(21, 321, 688, 14);
-		frame.getContentPane().add(label);
+		labelFeedback = new JLabel("");		//label de mensagem
+		labelFeedback.setForeground(Color.BLUE);
+		labelFeedback.setBounds(21, 321, 688, 14);
+		frame.getContentPane().add(labelFeedback);
 
-		label_4 = new JLabel("resultados:");
-		label_4.setBounds(21, 190, 431, 14);
-		frame.getContentPane().add(label_4);
+		labelResultados = new JLabel("Resultados:");
+		labelResultados.setBounds(21, 190, 431, 14);
+		frame.getContentPane().add(labelResultados);
 
-		label_2 = new JLabel("cpf:");
-		label_2.setHorizontalAlignment(SwingConstants.LEFT);
-		label_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		label_2.setBounds(21, 269, 71, 14);
-		frame.getContentPane().add(label_2);
+		labelNome = new JLabel("Nome:");
+		labelNome.setHorizontalAlignment(SwingConstants.LEFT);
+		labelNome.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		labelNome.setBounds(21, 265, 71, 14);
+		frame.getContentPane().add(labelNome);
 
-		textField = new JTextField();
-		textField.setFont(new Font("Dialog", Font.PLAIN, 12));
-		textField.setColumns(10);
-		textField.setBounds(68, 264, 195, 20);
-		frame.getContentPane().add(textField);
+		textFieldNome = new JTextField();
+		textFieldNome.setFont(new Font("Dialog", Font.PLAIN, 12));
+		textFieldNome.setColumns(10);
+		textFieldNome.setBounds(68, 265, 100, 20);
+		frame.getContentPane().add(textFieldNome);
 
-		button_1 = new JButton("Criar novo cliente");
-		button_1.addActionListener(new ActionListener() {
+		labelNomeTipoProduto = new JLabel("Nome TipoProduto:");
+		labelNomeTipoProduto.setHorizontalAlignment(SwingConstants.LEFT);
+		labelNomeTipoProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		labelNomeTipoProduto.setBounds(21, 305, 110, 14);
+		frame.getContentPane().add(labelNomeTipoProduto);
+
+		textFieldNomeTipoProduto = new JTextField();
+		textFieldNomeTipoProduto.setFont(new Font("Dialog", Font.PLAIN, 12));
+		textFieldNomeTipoProduto.setColumns(10);
+		textFieldNomeTipoProduto.setBounds(125, 305, 100, 20);
+		frame.getContentPane().add(textFieldNomeTipoProduto);
+
+		labelNomeProduto = new JLabel("Nome Produto:");
+		labelNomeProduto.setHorizontalAlignment(SwingConstants.LEFT);
+		labelNomeProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		labelNomeProduto.setBounds(240, 305, 80, 14);
+		frame.getContentPane().add(labelNomeProduto);
+
+		textFieldNomeProduto = new JTextField();
+		textFieldNomeProduto.setFont(new Font("Dialog", Font.PLAIN, 12));
+		textFieldNomeProduto.setColumns(10);
+		textFieldNomeProduto.setBounds(320, 305, 100, 20);
+		frame.getContentPane().add(textFieldNomeProduto);
+		
+		botaoCriarTipoProduto = new JButton("Criar novo tipoproduto");
+		botaoCriarTipoProduto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(textField.getText().isEmpty() || textField_1.getText().isEmpty()) {
-						label.setText("campo vazio");
+					if(textFieldNome.getText().isEmpty()) {
+						labelFeedback.setText("Campo vazio.");
 						return;
 					}
-					String cpf = textField.getText();
-					String nome = textField_1.getText();
+					String nome = textFieldNome.getText();
 					Fachada.cadastrarTipoProduto(nome);
-					label.setText("tipoproduto criado: "+ nome);
+					labelFeedback.setText("Tipoproduto criado: " + nome);
 					listagem();
 				}
 				catch(Exception ex) {
-					label.setText(ex.getMessage());
+					labelFeedback.setText(ex.getMessage());
 				}
 			}
 		});
-		button_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		button_1.setBounds(525, 265, 153, 23);
-		frame.getContentPane().add(button_1);
+		botaoCriarTipoProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoCriarTipoProduto.setBounds(200, 265, 153, 23);
+		frame.getContentPane().add(botaoCriarTipoProduto);
 
-		button = new JButton("Listar");
-		button.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		button.addActionListener(new ActionListener() {
+		botaoAdicionarProdutoemTipoProduto = new JButton("Adicionar produto");
+		botaoAdicionarProdutoemTipoProduto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(textFieldNomeTipoProduto.getText().isEmpty() || textFieldNomeProduto.getText().isEmpty()) {
+						labelFeedback.setText("Campo vazio.");
+						return;
+					}
+
+					String nometipoproduto = textFieldNomeTipoProduto.getText();
+					String nomeproduto = textFieldNomeProduto.getText();
+					Fachada.adicionarProdutoEmTipoProduto(nometipoproduto, nomeproduto);
+					labelFeedback.setText("Produto " + nomeproduto + " adicionado em " + nometipoproduto);
+					listagem();
+				}
+				catch(Exception ex) {
+					labelFeedback.setText(ex.getMessage());
+				}
+			}
+		});
+		botaoAdicionarProdutoemTipoProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoAdicionarProdutoemTipoProduto.setBounds(425,305, 130,23);
+		frame.getContentPane().add(botaoAdicionarProdutoemTipoProduto);
+
+		botaoRemoverProdutodeTipoProduto = new JButton("Remover produto");
+		botaoRemoverProdutodeTipoProduto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(textFieldNomeTipoProduto.getText().isEmpty() || textFieldNomeProduto.getText().isEmpty()) {
+						labelFeedback.setText("Campo vazio.");
+						return;
+					}
+
+					String nometipoproduto = textFieldNomeTipoProduto.getText();
+					String nomeproduto = textFieldNomeProduto.getText();
+					Fachada.removerProdutodeTipoProduto(nometipoproduto, nomeproduto);
+					labelFeedback.setText("Produto " + nomeproduto + " removido de " + nometipoproduto);
+					listagem();
+				}
+				catch(Exception ex) {
+					labelFeedback.setText(ex.getMessage());
+				}
+			}
+		});
+		botaoRemoverProdutodeTipoProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoRemoverProdutodeTipoProduto.setBounds(560,305, 130,23);
+		frame.getContentPane().add(botaoRemoverProdutodeTipoProduto);
+
+		botaoListar = new JButton("Listar");
+		botaoListar.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoListar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				listagem();
 			}
 		});
-		button.setBounds(308, 11, 89, 23);
-		frame.getContentPane().add(button);
+		botaoListar.setBounds(308, 11, 89, 23);
+		frame.getContentPane().add(botaoListar);
 
-		label_3 = new JLabel("nome:");
-		label_3.setHorizontalAlignment(SwingConstants.LEFT);
-		label_3.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		label_3.setBounds(281, 269, 63, 14);
-		frame.getContentPane().add(label_3);
-
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Dialog", Font.PLAIN, 12));
-		textField_1.setColumns(10);
-		textField_1.setBounds(336, 264, 168, 20);
-		frame.getContentPane().add(textField_1);
-
-		button_2 = new JButton("Apagar selecionado");
-		button_2.addActionListener(new ActionListener() {
+		botaoApagarTipoProduto = new JButton("Apagar selecionado");
+		botaoApagarTipoProduto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try{
 					if (table.getSelectedRow() >= 0){	
-						label.setText("nao implementado " );
+						labelFeedback.setText("Não implementado." );
 						String nome = (String) table.getValueAt( table.getSelectedRow(), 0);
 						Fachada.excluirTipoProduto(nome);
-						label.setText("tipoproduto apagado" );
+						labelFeedback.setText("Tipoproduto" + nome + "apagado.");
 						listagem();
 					}
 					else
-						label.setText("nao selecionado");
+						labelFeedback.setText("Não selecionado.");
 				}
 				catch(Exception ex) {
-					label.setText(ex.getMessage());
+					labelFeedback.setText(ex.getMessage());
 				}
 			}
 		});
-		button_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		button_2.setBounds(281, 213, 171, 23);
-		frame.getContentPane().add(button_2);
+		botaoApagarTipoProduto.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoApagarTipoProduto.setBounds(229, 215, 171, 23);
+		frame.getContentPane().add(botaoApagarTipoProduto);
 
-		button_3 = new JButton("exibir alugueis");
-		button_3.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		button_3.addActionListener(new ActionListener() {
+		botaoExibirProdutos = new JButton("Exibir produtos");
+		botaoExibirProdutos.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		botaoExibirProdutos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try{
-					if (table.getSelectedRow() >= 0){	
+					if (table.getSelectedRow() >= 0){
 						String nome = (String) table.getValueAt( table.getSelectedRow(), 0);
 						TipoProduto tipoproduto = Fachada.localizarTipoProduto(nome);
 
-						if(tipoproduto !=  null) {
+						if (tipoproduto != null) {
 							String texto="";
-							if(tipoproduto.getProdutos().isEmpty())
-								texto = "nao possui alugueis";
+							if (tipoproduto.getProdutos().isEmpty())
+								texto = "Não existem produtos.";
 							else
-								for (Produto p : tipoproduto.getProdutos()) 
-									texto = texto + p.toString();
+								for (Produto p : tipoproduto.getProdutos()) {
+									texto = texto + p.getNome();
+								}
 
-							JOptionPane.showMessageDialog(frame, texto, "alugueis", 1);
+							JOptionPane.showMessageDialog(frame, texto, "Produtos", JOptionPane.INFORMATION_MESSAGE);
 						}
 					}
 				}
 				catch(Exception erro) {
-					label.setText(erro.getMessage());
+					labelFeedback.setText(erro.getMessage());
 				}
 			}
 		});
-		button_3.setBounds(96, 214, 134, 23);
-		frame.getContentPane().add(button_3);
+		botaoExibirProdutos.setBounds(47, 215, 134, 23);
+		frame.getContentPane().add(botaoExibirProdutos);
 	}
 
 	public void listagem() {
@@ -250,21 +316,20 @@ public class TelaTipoProduto {
 			DefaultTableModel model = new DefaultTableModel();
 
 			//adicionar colunas no model
-			model.addColumn("cpf");
 			model.addColumn("nome");
 
 			//adicionar linhas no model
 			for(TipoProduto tp : lista) {
-				model.addRow(new Object[]{tp.getNome(), tp.getNome()} ); // falta reomver o segundo getNome
+				model.addRow(new Object[]{tp.getNome()}); // falta reomver o segundo getNome
 			}
 
 			//atualizar model no table (visualizacao)
 			table.setModel(model);
 
-			label_4.setText("resultados: "+lista.size()+ " objetos");
+			labelResultados.setText("resultados: "+lista.size()+ " objetos");
 		}
 		catch(Exception erro){
-			label.setText(erro.getMessage());
+			labelFeedback.setText(erro.getMessage());
 		}
 	}
 }
