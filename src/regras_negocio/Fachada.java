@@ -230,12 +230,42 @@ public class Fachada {
 		return resultados;
 	}
 
-	public static void adicionarProdutoEmTipoProduto(String nometipoproduto, String nomeproduto) {
-		return; //TODO
+	public static void adicionarProdutoEmTipoProduto(String nometipoproduto, String nomeproduto) throws Exception {
+		DAO.begin();
+		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
+		if (tipoproduto == null) {
+			throw new Exception("Tipoproduto não existe.");
+		}
+
+		Produto produto = daoproduto.read(nomeproduto);
+		if (produto == null) {
+			throw new Exception("Produto não existe.");
+		}
+
+		if (produto.getTipoproduto() != null) {
+			produto.getTipoproduto().remover(produto);
+		}
+
+		produto.setTipoproduto(tipoproduto);
+		tipoproduto.adicionar(produto);
+		DAO.commit();
 	}
 
-	public static void removerProdutodeTipoProduto(String nometipoproduto, String nomeproduto) {
-		return; //TODO
+	public static void removerProdutodeTipoProduto(String nometipoproduto, String nomeproduto) throws Exception {
+		DAO.begin();
+		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
+		if (tipoproduto == null) {
+			throw new Exception("Tipoproduto não existe.");
+		}
+
+		Produto produto = daoproduto.read(nomeproduto);
+		if (produto == null) {
+			throw new Exception("Produto não existe.");
+		}
+
+		produto.setTipoproduto(null); // tem que ajeitar aqui
+		tipoproduto.remover(produto);
+		DAO.commit();
 	}
 
 	// ------------------Usuario------------------------------------
