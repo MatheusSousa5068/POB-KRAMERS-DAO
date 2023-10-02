@@ -20,11 +20,10 @@ public class Consultar {
 				System.out.println(v);
 
 
-			System.out.println("\nVends com produtos de preço de R$4,50");
+			System.out.println("\nVendas com produtos de preço de R$4,50");
 			for(Venda v : Fachada.vendasComProdutoDePrecoX(4.5))
 				System.out.println(v);
 
-			//System.out.println("clientes que possuem 2 alugueis");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

@@ -30,10 +30,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.db4o.ObjectContainer;
+//import com.db4o.ObjectContainer;
 
-import modelo.Aluguel;
-import modelo.Carro;
+import models.Venda;
 import regras_negocio.Fachada;
 
 public class TelaConsulta {
@@ -41,10 +40,10 @@ public class TelaConsulta {
 	private JTable table;
 	private JScrollPane scrollPane;
 	private JButton button;
-	private JLabel label;
-	private JLabel label_4;
+	private JLabel labelFeedback;
+	private JLabel labelResultados;
 
-	private ObjectContainer manager;
+	//private ObjectContainer manager;
 	private JComboBox comboBox;
 
 	/**
@@ -101,7 +100,7 @@ public class TelaConsulta {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				label_4.setText("selecionado="+ (String) table.getValueAt( table.getSelectedRow(), 0));
+				labelResultados.setText("selecionado="+ (String) table.getValueAt( table.getSelectedRow(), 0));
 			}
 		});
 		table.setGridColor(Color.BLACK);
@@ -117,14 +116,14 @@ public class TelaConsulta {
 		table.setShowGrid(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-		label = new JLabel("");		//label de mensagem
-		label.setForeground(Color.BLUE);
-		label.setBounds(21, 321, 688, 14);
-		frame.getContentPane().add(label);
+		labelFeedback = new JLabel("");		//label de mensagem
+		labelFeedback.setForeground(Color.BLUE);
+		labelFeedback.setBounds(21, 321, 688, 14);
+		frame.getContentPane().add(labelFeedback);
 
-		label_4 = new JLabel("resultados:");
-		label_4.setBounds(21, 190, 431, 14);
-		frame.getContentPane().add(label_4);
+		labelResultados = new JLabel("Resultados: ");
+		labelResultados.setBounds(21, 190, 431, 14);
+		frame.getContentPane().add(labelResultados);
 
 		button = new JButton("Consultar");
 		button.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -132,25 +131,24 @@ public class TelaConsulta {
 			public void actionPerformed(ActionEvent e) {
 				int index = comboBox.getSelectedIndex();
 				if(index<0)
-					label_4.setText("consulta nao selecionada");
+					labelResultados.setText("Consulta não selecionada.");
 				else
 					switch(index) {
-					case 0: 
-						List<Aluguel> resultado1 = Fachada.alugueisFinalizados();
-						listagemAluguel(resultado1);
+					case 0:
+						String data = JOptionPane.showInputDialog("Digite a data:");
+						List<Venda> resultado1 = Fachada.vendaDataX(data);
+						listagemVenda(resultado1);
 						break;
 					case 1: 
-						String modelo = JOptionPane.showInputDialog("digite o modelo");
-						List<Aluguel> resultado2 = Fachada.alugueisModelo(modelo);
-						listagemAluguel(resultado2);
+						double preco = Double.parseDouble(JOptionPane.showInputDialog("Digite o preço:"));
+						List<Venda> resultado2 = Fachada.vendasComProdutoDePrecoX(preco);
+						listagemVenda(resultado2);
 						break;
 					case 2: 
-						String n = JOptionPane.showInputDialog("digite N");
-						int numero = Integer.parseInt(n);
-						List<Carro> resultado3 = Fachada.carrosNAlugueis(numero);
-						listagemCarro(resultado3);
+						int quantidade = Integer.parseInt(JOptionPane.showInputDialog("Digite a quantidade:"));
+						List<Venda> resultado3 = Fachada.vendasComMaisDeNProdutos(quantidade);
+						listagemVenda(resultado3);
 						break;
-
 					}
 
 			}
@@ -159,62 +157,35 @@ public class TelaConsulta {
 		frame.getContentPane().add(button);
 
 		comboBox = new JComboBox();
-		comboBox.setToolTipText("selecione a consulta");
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"alugueis finalizados", "alugueis de um determinado modelo de carro", "carros que possuem N alugueis"}));
+		comboBox.setToolTipText("Selecione a consulta");
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Vendas da data X", "Vendas com produtos de preço X", "Vendas com mais de X produtos"}));
 		comboBox.setBounds(21, 10, 513, 22);
 		frame.getContentPane().add(comboBox);
 	}
 
-	public void listagemAluguel(List<Aluguel> lista) {
+	public void listagemVenda(List<Venda> lista) {
 		try{
 			// o model armazena todas as linhas e colunas do table
 			DefaultTableModel model = new DefaultTableModel();
 
 			//adicionar colunas no model
-			model.addColumn("id");
-			model.addColumn("nome");
-			model.addColumn("placa");
-			model.addColumn("data inicial");
-			model.addColumn("data final");
-			model.addColumn("total a pagar");
-			model.addColumn("finalizado");
+			model.addColumn("ID");
+			model.addColumn("Data");
+			model.addColumn("Valor total");
+			model.addColumn("Valor pago");
+			model.addColumn("Desconto");
 
 			//adicionar linhas no model
-			for(Aluguel aluguel : lista) {
-				model.addRow(new Object[]{aluguel.getId(), aluguel.getCliente().getNome(), aluguel.getCarro().getPlaca(), aluguel.getDatainicio(), aluguel.getDatafim(), aluguel.getValor(), aluguel.isFinalizado()});
+			for(Venda venda : lista) {
+				model.addRow(new Object[]{venda.getId(), venda.getData(), venda.getValortotal(), venda.getValorpago(), venda.getDesconto()});
 			}
 			//atualizar model no table (visualizacao)
 			table.setModel(model);
 
-			label_4.setText("resultados: "+lista.size()+ " objetos");
+			labelResultados.setText("Resultados: "+ lista.size() + " objetos");
 		}
 		catch(Exception erro){
-			label.setText(erro.getMessage());
+			labelFeedback.setText(erro.getMessage());
 		}
 	}
-	
-	public void listagemCarro(List<Carro> lista) {
-		try{
-			// model armazena todas as linhas e colunas do table
-			DefaultTableModel model = new DefaultTableModel();
-
-			//adicionar colunas no model
-			model.addColumn("placa");
-			model.addColumn("modelo");
-			model.addColumn("alugado");
-
-			//adicionar linhas no model
-			for(Carro car : lista) {
-				model.addRow(new Object[]{car.getPlaca(), car.getModelo(), car.isAlugado()} );
-			}
-			//atualizar model no table (visualizacao)
-			table.setModel(model);
-
-			label_4.setText("resultados: "+lista.size()+ " objetos");
-		}
-		catch(Exception erro){
-			label.setText(erro.getMessage());
-		}
-	}
-
 }

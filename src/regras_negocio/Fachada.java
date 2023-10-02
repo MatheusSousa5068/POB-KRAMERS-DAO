@@ -101,6 +101,21 @@ public class Fachada {
 		throw new Exception("Produto não existe em venda");
 	}
 
+	public static Produto localizarProduto(String nome) {
+		DAO.begin();
+        return daoproduto.read(nome);
+	}
+
+	public static TipoProduto localizarTipoProduto(String nome) {
+		DAO.begin();
+		return daotipoproduto.read(nome);
+	}
+
+	public static Venda localizarVenda(int id) {
+		DAO.begin();
+		return daovenda.read(id);
+	}
+
 	public static List<Venda> vendaDataX(String data) {
 		DAO.begin();
 		List<Venda> vendas = daovenda.vendasDataX(data);
@@ -121,9 +136,12 @@ public class Fachada {
 		DAO.begin();
 		List<Venda> vendas = daovenda.vendasComProdutoDePrecoX(preco);
 		DAO.commit();
-		DAO.close();
 
 		return vendas;
+	}
+
+	public static List<Venda> listarVendascomProdutoP(String nome) {
+		return daovenda.vendasComProdutoP(nome);
 	}
 
 	public static void excluirProduto(String nomeProduto) throws Exception {
@@ -144,11 +162,10 @@ public class Fachada {
 		TipoProduto tipoProduto = produto.getTipoproduto();
 		tipoProduto.remover(produto);
 		daotipoproduto.update(tipoProduto);
+		daoproduto.update(produto);
 		daoproduto.delete(produto);
 		
 		DAO.commit();
-		DAO.close();
-		
 	}
 
 	public static void excluirTipoProduto(String nomeTipoProduto) throws Exception {
@@ -172,12 +189,15 @@ public class Fachada {
 
 		daotipoproduto.delete(tipoProduto);
 		DAO.commit();
-		DAO.close();
 	}
 
+	public static void excluirVenda(int id) {
+		DAO.begin();
+		Venda venda = daovenda.read(id);
+		daovenda.delete(venda);
+		DAO.commit();
+	}
 
-	
-	
 	public static List<Produto> listarProdutos() {
 		DAO.begin();
 		List<Produto> resultados = daoproduto.readAll();
@@ -204,6 +224,48 @@ public class Fachada {
 		List<Usuario> resultados = daousuario.readAll();
 		DAO.commit();
 		return resultados;
+	}
+
+	public static void adicionarProdutoEmTipoProduto(String nometipoproduto, String nomeproduto) throws Exception {
+		DAO.begin();
+		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
+		if (tipoproduto == null) {
+			throw new Exception("Tipoproduto não existe.");
+		}
+
+		Produto produto = daoproduto.read(nomeproduto);
+		if (produto == null) {
+			throw new Exception("Produto não existe.");
+		}
+
+		if (produto.getTipoproduto() != null) {
+			produto.getTipoproduto().remover(produto);
+		}
+
+		produto.setTipoproduto(tipoproduto);
+		tipoproduto.adicionar(produto);
+		daoproduto.update(produto);
+		daotipoproduto.update(tipoproduto);
+		DAO.commit();
+	}
+
+	public static void removerProdutodeTipoProduto(String nometipoproduto, String nomeproduto) throws Exception {
+		DAO.begin();
+		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
+		if (tipoproduto == null) {
+			throw new Exception("Tipoproduto não existe.");
+		}
+
+		Produto produto = daoproduto.read(nomeproduto);
+		if (produto == null) {
+			throw new Exception("Produto não existe.");
+		}
+
+		produto.setTipoproduto(null); // tem que ajeitar aqui
+		tipoproduto.remover(produto);
+		daoproduto.update(produto);
+		daotipoproduto.update(tipoproduto);
+		DAO.commit();
 	}
 
 	// ------------------Usuario------------------------------------
