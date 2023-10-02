@@ -86,7 +86,6 @@ public class TelaVenda {
 				Fachada.inicializar();
 				listagem();
 			}
-
 			@Override
 			public void windowClosing(WindowEvent e) {
 				Fachada.finalizar();
