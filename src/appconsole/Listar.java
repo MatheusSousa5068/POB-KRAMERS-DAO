@@ -8,7 +8,6 @@
 package appconsole;
 
 import daodb4o.Util;
-import models.Usuario;
 import models.Produto;
 import models.TipoProduto;
 import models.Venda;
@@ -35,10 +34,6 @@ public class Listar {
 			System.out.println("\n---listagem de tipos de produtos:");
 			for(TipoProduto c: Fachada.listarTipoProdutos())
 				System.out.println(c);
-
-			System.out.println("\n---listagem de usuarios:");
-			for(Usuario u: Fachada.listarUsuarios())
-				System.out.println(u);
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

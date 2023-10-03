@@ -7,11 +7,9 @@ import daodb4o.DAO;
 import daodb4o.DAOProduto;
 import daodb4o.DAOTipoProduto;
 import daodb4o.DAOVenda;
-import daodb4o.DAOUsuario;
 import models.Produto;
 import models.TipoProduto;
 import models.Venda;
-import models.Usuario;
 
 public class Fachada {
 	private Fachada() {
@@ -20,7 +18,6 @@ public class Fachada {
 	private static DAOProduto daoproduto = new DAOProduto();
 	private static DAOTipoProduto daotipoproduto = new DAOTipoProduto();
 	private static DAOVenda daovenda = new DAOVenda();
-	private static DAOUsuario daousuario = new DAOUsuario();
 
 	public static void inicializar() {
 		DAO.open();
@@ -224,13 +221,6 @@ public class Fachada {
 		return resultados;
 	}
 
-	public static List<Usuario> listarUsuarios() {
-		DAO.begin();
-		List<Usuario> resultados = daousuario.readAll();
-		DAO.commit();
-		return resultados;
-	}
-
 	public static void adicionarProdutoEmTipoProduto(String nometipoproduto, String nomeproduto) throws Exception {
 		DAO.begin();
 		TipoProduto tipoproduto = daotipoproduto.read(nometipoproduto);
@@ -265,33 +255,17 @@ public class Fachada {
 		if (produto == null) {
 			throw new Exception("Produto não existe.");
 		}
+		
+		TipoProduto nao_alocado = daotipoproduto.read("Nao-Alocado");
+		if(nao_alocado == null) {
+			nao_alocado = new TipoProduto("Nao-Alocado");
+			daotipoproduto.create(nao_alocado);
+		}
 
-		produto.setTipoproduto(null); // tem que ajeitar aqui
+		produto.setTipoproduto(nao_alocado);
 		tipoproduto.remover(produto);
 		daoproduto.update(produto);
 		daotipoproduto.update(tipoproduto);
 		DAO.commit();
-	}
-
-	// ------------------Usuario------------------------------------
-	public static Usuario cadastrarUsuario(String nome, String senha) throws Exception {
-		DAO.begin();
-		Usuario usu = daousuario.read(nome);
-		if (usu != null)
-			throw new Exception("Usuario ja cadastrado:" + nome);
-		usu = new Usuario(nome, senha);
-
-		daousuario.create(usu);
-		DAO.commit();
-		return usu;
-	}
-
-	public static Usuario localizarUsuario(String nome, String senha) {
-		Usuario usu = daousuario.read(nome);
-		if (usu == null)
-			return null;
-		if (!usu.getSenha().equals(senha))
-			return null;
-		return usu;
 	}
 }
