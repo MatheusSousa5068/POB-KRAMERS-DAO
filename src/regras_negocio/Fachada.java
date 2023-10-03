@@ -21,7 +21,6 @@ public class Fachada {
 	private static DAOTipoProduto daotipoproduto = new DAOTipoProduto();
 	private static DAOVenda daovenda = new DAOVenda();
 	private static DAOUsuario daousuario = new DAOUsuario();
-	public static Usuario logado;
 
 	public static void inicializar() {
 		DAO.open();
