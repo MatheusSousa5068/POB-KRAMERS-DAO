@@ -173,17 +173,23 @@ public class Fachada {
 		if (tipoProduto == null)
 			throw new Exception("Tipo de produto não existe: " + nomeTipoProduto);
 
-		TipoProduto secundario = daotipoproduto.read("Diversos");
-
 		List<Produto> produtosParaMover = new ArrayList<>(tipoProduto.getProdutos());
+
+		TipoProduto nao_alocado = daotipoproduto.read("Nao-Alocado");
+		if(nao_alocado == null) {
+			nao_alocado = new TipoProduto("Nao-Alocado");
+			daotipoproduto.create(nao_alocado);
+		}
+
+
 
 		// lista temporária
 		for (Produto p : produtosParaMover) {
-			p.setTipoproduto(secundario);
+			p.setTipoproduto(nao_alocado);
 			tipoProduto.remover(p);
 			daotipoproduto.update(tipoProduto);
 
-			daotipoproduto.update(secundario);
+			daotipoproduto.update(nao_alocado);
 		}
 
 		daotipoproduto.delete(tipoProduto);
