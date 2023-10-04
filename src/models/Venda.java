@@ -87,3 +87,4 @@ public class Venda {
                 + ", valortotal=" + valortotal + ", valorpago=" + valorpago + "]";
     }
 }
+
